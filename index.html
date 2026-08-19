@@ -543,8 +543,8 @@ function computeLayout(doc, options) {
   const order = chainOrder(graph);
   let positions, usedMode;
   if (order && opts.mode !== 'layered') {
-    usedMode = opts.mode === 'auto' ? 'snake' : opts.mode;
-    if (usedMode === 'layered') usedMode = 'snake';
+    usedMode = opts.mode === 'auto' ? (opts.direction === 'LR' ? 'horizontal' : 'vertical') : opts.mode;
+    if (usedMode === 'layered') usedMode = opts.direction === 'LR' ? 'horizontal' : 'vertical';
     positions = layoutChain(order, usedMode, opts);
   } else {
     usedMode = 'layered (' + opts.direction + ')';
