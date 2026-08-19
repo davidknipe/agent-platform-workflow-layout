@@ -808,25 +808,23 @@ function segmentsCross(s1, s2) {
       if (!positions.has(e.source) || !positions.has(e.target)) continue;
       const a = centre(e.source), b = centre(e.target);
       const dx = b.x - a.x, dy = b.y - a.y;
-      let p1, p2, c1, c2;
+      let p1, p2, d;
       if (Math.abs(dy) >= Math.abs(dx)) {
         const dir = dy >= 0 ? 1 : -1;
         p1 = { x: a.x, y: a.y + dir * a.h / 2 };
         p2 = { x: b.x, y: b.y - dir * b.h / 2 };
-        const bend = Math.max(30, Math.abs(p2.y - p1.y) * 0.4);
-        c1 = { x: p1.x, y: p1.y + dir * bend };
-        c2 = { x: p2.x, y: p2.y - dir * bend };
+        const midY = (p1.y + p2.y) / 2;
+        d = 'M ' + p1.x + ' ' + p1.y + ' V ' + midY + ' H ' + p2.x + ' V ' + p2.y;
       } else {
         const dir = dx >= 0 ? 1 : -1;
         p1 = { x: a.x + dir * a.w / 2, y: a.y };
         p2 = { x: b.x - dir * b.w / 2, y: b.y };
-        const bend = Math.max(30, Math.abs(p2.x - p1.x) * 0.4);
-        c1 = { x: p1.x + dir * bend, y: p1.y };
-        c2 = { x: p2.x - dir * bend, y: p2.y };
+        const midX = (p1.x + p2.x) / 2;
+        d = 'M ' + p1.x + ' ' + p1.y + ' H ' + midX + ' V ' + p2.y + ' H ' + p2.x;
       }
       const path = document.createElementNS(SVG_NS, 'path');
       path.setAttribute('class', 'edge-path');
-      path.setAttribute('d', 'M ' + p1.x + ' ' + p1.y + ' C ' + c1.x + ' ' + c1.y + ', ' + c2.x + ' ' + c2.y + ', ' + p2.x + ' ' + p2.y);
+      path.setAttribute('d', d);
       path.setAttribute('marker-end', 'url(#' + mid + ')');
       edgeLayer.appendChild(path);
     }
