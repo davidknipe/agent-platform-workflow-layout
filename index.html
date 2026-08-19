@@ -686,7 +686,9 @@ function segmentsCross(s1, s2) {
       const opts = readOptions();
       if (opts.direction === 'auto') {
         const nodeCount = (Array.isArray(doc.steps) ? doc.steps.length : 0) + (Array.isArray(doc.triggers) ? doc.triggers.length : 0);
-        opts.direction = nodeCount < 5 ? 'LR' : 'TB';
+        if (nodeCount < 4) { opts.direction = 'LR'; }
+        else if (nodeCount < 7) { opts.direction = 'TB'; }
+        else { opts.mode = 'snake'; opts.direction = 'LR'; }
       } else if (opts.direction === 'snake') {
         opts.mode = 'snake';
         opts.direction = 'LR';
