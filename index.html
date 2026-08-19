@@ -545,8 +545,8 @@ function computeLayout(doc, options) {
     if (usedMode === 'layered') usedMode = 'snake';
     positions = layoutChain(order, usedMode, opts);
   } else {
-    usedMode = 'layered (' + (order ? opts.direction : (opts.mode === 'auto' ? 'TB' : opts.direction)) + ')';
-    const dir = opts.mode === 'auto' ? (order ? 'LR' : 'TB') : opts.direction;
+    usedMode = 'layered (' + opts.direction + ')';
+    const dir = opts.direction;
     positions = layoutLayered(graph, Object.assign({}, opts, { direction: dir }), existing.positions);
   }
   // Normalise: top-left of bounding box at (0,0) for a predictable canvas
