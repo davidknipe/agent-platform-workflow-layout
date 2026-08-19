@@ -4,15 +4,34 @@
 
 A single-file, dependency-free browser tool that tidies the canvas layout of Optimizely Opal workflow agents. Opal workflow exports are JSON; when the `agent_metadata` block is missing or messy, the Opal UI renders nodes overlapping or with tangled edges. This tool takes a pasted workflow JSON export and returns the same JSON with `agent_metadata.nodes` and `agent_metadata.edges` rebuilt so the workflow renders cleanly (straight lines, parallelism, no overlaps, no edge crossings).
 
-The entire tool is one file: `opal-workflow-layout.html`. Engine, UI and styles are all inline. There is no build step, no npm dependencies and no network access at runtime (a strict CSP meta tag enforces this). Keep it that way unless explicitly asked otherwise.
+The browser tool lives in `index.html` — engine, UI and styles all inline, no build step, no npm dependencies, no network access at runtime (strict CSP meta tag). Keep it that way unless explicitly asked otherwise.
+
+The layout engine is also available as a standalone TypeScript module: `opal-workflow-layout.ts`. Use this for programmatic re-use in other applications.
+
+## Files
+
+- `index.html` — the complete browser tool (source of truth for the live site)
+- `opal-workflow-layout.ts` — the layout engine extracted as a reusable TypeScript module
 
 ## How to work on it
 
-- Everything lives in `opal-workflow-layout.html`. There are two `<script>` blocks:
+### Browser tool (`index.html`)
+- Two `<script>` blocks:
   1. The **layout engine** (pure functions, no DOM): `buildGraph`, `assignRanks`, `chainOrder`, `layoutChain`, `layoutLayered`, `computeLayout`, `buildOutput`, `layoutStats`, `readExistingMetadata`.
   2. The **UI** (an IIFE): paste/copy handling, controls, SVG preview rendering, stats chips, toasts.
-- The engine is deliberately DOM-free so it can be unit tested in node by extracting the first script block (or temporarily re-adding a `module.exports` line at the end of it).
 - To verify changes headlessly, use jsdom: load the file with `runScripts: 'dangerously'`, stub `navigator.clipboard`, dispatch `click` events on `#sampleBtn` / `#runBtn` / `#copyBtn` and assert on `#output`, `#svgAfter`, `.toast` etc. Always re-run an XSS probe (a step name like `<img src=x onerror=alert(1)>` must render as text only) after touching the rendering code.
+
+### TypeScript module (`opal-workflow-layout.ts`)
+- Pure TypeScript, no DOM, no dependencies — works in Node or browser.
+- Exports: `computeLayout`, `buildOutput`, `buildGraph`, `readExistingMetadata`, `layoutStats` plus all type definitions (`LayoutOptions`, `LayoutResult`, `Graph`, `GraphNode`, `GraphEdge`, `Point`, `Size`, etc.).
+- **Keep in sync with `index.html`** — any algorithm change in one must be reflected in the other.
+
+```ts
+import { computeLayout, buildOutput } from './opal-workflow-layout';
+
+const layout = computeLayout(workflowDoc, { direction: 'LR' });
+const updated = buildOutput(workflowDoc, layout, () => crypto.randomUUID());
+```
 
 ## Opal workflow JSON schema (learned from real exports, schema_version 1.2)
 
