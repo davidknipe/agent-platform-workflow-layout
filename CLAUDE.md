@@ -6,8 +6,7 @@ A single-file, dependency-free browser tool that fixes the canvas layout of Opti
 See `application.md` for the full specification: JSON schema, layout algorithm details, Axiom design system tokens, behavioural contract, security requirements, and known unknowns.
 
 ## Files
-- `opal-workflow-layout.html` — the entire tool (engine + UI + styles, all inline, no dependencies)
-- `index.html` — copy of the above, served as the Cloudflare Pages root
+- `index.html` — the entire tool (engine + UI + styles, all inline, no dependencies), served as the Cloudflare Pages root
 - `application.md` — full application spec and history (written by Claude chat)
 
 ## Hosting
@@ -22,6 +21,5 @@ Connected to GitHub — every push to `main` auto-deploys via Cloudflare Pages.
 No build step (static HTML only). Build output directory: `.`
 
 ## To deploy changes
-1. Edit `opal-workflow-layout.html`
-2. Copy to `index.html`: `cp opal-workflow-layout.html index.html`
-3. Commit and push to `main` — Cloudflare deploys automatically
+1. Edit `index.html`
+2. Commit and push to `main` — Cloudflare deploys automatically
