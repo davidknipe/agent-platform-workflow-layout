@@ -87,7 +87,8 @@
   }
   .card-title { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .card-title h2 { font-family: var(--ax-font-heading); font-size: 1rem; line-height: 1.5rem; font-weight: 600; margin: 0; }
-  .agent-name { color: var(--ax-fg-tertiary); font-size: 0.75rem; line-height: 1rem; }
+  .card-header { display: flex; flex-direction: column; gap: 2px; }
+  .agent-name { color: var(--ax-fg-secondary); font-size: 0.8125rem; line-height: 1.1rem; font-family: var(--ax-font-sans); font-weight: 400; }
 
   .grid { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
   @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
@@ -255,12 +256,12 @@
 
   <div class="previews">
     <section class="card">
-      <div class="card-title"><h2>Before</h2><span id="agentNameBefore" class="agent-name"></span></div>
+      <div class="card-title"><div class="card-header"><h2>Before</h2><span id="agentNameBefore" class="agent-name"></span></div></div>
       <div class="canvas-wrap"><svg id="svgBefore" role="img" aria-label="Preview of the workflow before layout"></svg><span id="beforeNote" class="canvas-note" hidden></span></div>
       <div id="chipsBefore" class="chips"></div>
     </section>
     <section class="card after">
-      <div class="card-title"><h2>After</h2><span id="agentNameAfter" class="agent-name"></span></div>
+      <div class="card-title"><div class="card-header"><h2>After</h2><span id="agentNameAfter" class="agent-name"></span></div></div>
       <div class="canvas-wrap"><svg id="svgAfter" role="img" aria-label="Preview of the workflow after layout"></svg></div>
       <div id="chipsAfter" class="chips"></div>
     </section>
@@ -743,6 +744,8 @@ function segmentsCross(s1, s2) {
     els.chipsBefore.replaceChildren();
     els.chipsAfter.replaceChildren();
     els.beforeNote.hidden = true;
+    els.agentNameBefore.textContent = '';
+    els.agentNameAfter.textContent = '';
   }
 
   function renderChips(container, stats, isBefore) {
