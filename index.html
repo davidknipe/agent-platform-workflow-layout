@@ -221,7 +221,7 @@
   <div class="grid">
     <section class="card">
       <div class="card-title"><h2>Workflow JSON</h2><button id="sampleBtn" type="button" class="subtle">Load sample</button></div>
-      <textarea id="input" spellcheck="false" aria-label="Workflow JSON input" placeholder='Paste the exported workflow agent JSON here, then select "Lay out workflow".'></textarea>
+      <textarea id="input" spellcheck="false" aria-label="Workflow JSON input" placeholder='Paste the exported workflow agent JSON here to lay it out.'></textarea>
       <div id="inStatus" class="status" role="status"></div>
       <div id="warnings" class="warnings" role="alert"></div>
     </section>
@@ -233,7 +233,6 @@
   </div>
 
   <div class="controls">
-    <button id="runBtn" class="primary" type="button">Lay out workflow</button>
     <div class="field">
       <label for="direction">Direction</label>
       <select id="direction">
@@ -638,7 +637,7 @@ function segmentsCross(s1, s2) {
   const $ = (id) => document.getElementById(id);
   const els = {
     input: $('input'), output: $('output'), inStatus: $('inStatus'), outStatus: $('outStatus'),
-    warnings: $('warnings'), runBtn: $('runBtn'), copyBtn: $('copyBtn'), sampleBtn: $('sampleBtn'),
+    warnings: $('warnings'), copyBtn: $('copyBtn'), sampleBtn: $('sampleBtn'),
     direction: $('direction'),
     xPitch: $('xPitch'), yPitch: $('yPitch'),
     svgBefore: $('svgBefore'), svgAfter: $('svgAfter'), beforeNote: $('beforeNote'),
@@ -674,7 +673,7 @@ function segmentsCross(s1, s2) {
     setStatus(els.outStatus, '');
     els.warnings.textContent = '';
     const raw = els.input.value.trim();
-    if (!raw) { setStatus(els.inStatus, 'Nothing to lay out yet - paste a workflow JSON export first.', 'err'); return; }
+    if (!raw) { setStatus(els.inStatus, 'Nothing to lay out yet - paste a workflow JSON export above.', 'err'); return; }
     if (raw.length > MAX_INPUT) { setStatus(els.inStatus, 'Input is larger than 5 MB - that does not look like a workflow export.', 'err'); return; }
     let doc;
     try { doc = JSON.parse(raw); }
@@ -909,7 +908,7 @@ function segmentsCross(s1, s2) {
     };
   }
 
-  els.runBtn.addEventListener('click', run);
+  els.input.addEventListener('input', () => { if (els.input.value.trim()) run(); });
   els.copyBtn.addEventListener('click', copyResult);
   els.sampleBtn.addEventListener('click', () => { els.input.value = JSON.stringify(sampleDoc(), null, 2); run(); });
   for (const el of [els.direction, els.xPitch, els.yPitch]) {
