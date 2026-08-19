@@ -1,11 +1,14 @@
 # agent-platform-workflow-layout
 
 ## What this is
-A static HTML prototype for an Optimizely agent platform workflow layout UI.
+A single-file, dependency-free browser tool that fixes the canvas layout of Optimizely Opal workflow agents. It takes a pasted Opal workflow JSON export and returns the same JSON with `agent_metadata.nodes` and `agent_metadata.edges` rebuilt so the workflow renders cleanly in the Opal UI (no overlapping nodes, no tangled edges).
+
+See `application.md` for the full specification: JSON schema, layout algorithm details, Axiom design system tokens, behavioural contract, security requirements, and known unknowns.
 
 ## Files
-- `opal-workflow-layout.html` — the main design file (source of truth)
+- `opal-workflow-layout.html` — the entire tool (engine + UI + styles, all inline, no dependencies)
 - `index.html` — copy of the above, served as the Cloudflare Pages root
+- `application.md` — full application spec and history (written by Claude chat)
 
 ## Hosting
 - **Cloudflare Pages project:** `workflow-layout`
