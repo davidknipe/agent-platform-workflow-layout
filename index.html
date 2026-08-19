@@ -87,6 +87,7 @@
   }
   .card-title { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .card-title h2 { font-family: var(--ax-font-heading); font-size: 1rem; line-height: 1.5rem; font-weight: 600; margin: 0; }
+  .agent-name { color: var(--ax-fg-tertiary); font-size: 0.75rem; line-height: 1rem; }
 
   .grid { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
   @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
@@ -207,9 +208,9 @@
 </head>
 <body>
 <div class="appbar">
-  <span class="wordmark">Optimizely</span>
+  <span class="wordmark">Optimizely AI</span>
   <span class="divider" aria-hidden="true"></span>
-  <span class="product">Opal &rsaquo; Workflow layout</span>
+  <span class="product">Workflow layout optimiser</span>
   <span class="spacer"></span>
   <span class="chip">Internal tool</span>
 </div>
@@ -254,12 +255,12 @@
 
   <div class="previews">
     <section class="card">
-      <div class="card-title"><h2>Before</h2></div>
+      <div class="card-title"><h2>Before</h2><span id="agentNameBefore" class="agent-name"></span></div>
       <div class="canvas-wrap"><svg id="svgBefore" role="img" aria-label="Preview of the workflow before layout"></svg><span id="beforeNote" class="canvas-note" hidden></span></div>
       <div id="chipsBefore" class="chips"></div>
     </section>
     <section class="card after">
-      <div class="card-title"><h2>After</h2></div>
+      <div class="card-title"><h2>After</h2><span id="agentNameAfter" class="agent-name"></span></div>
       <div class="canvas-wrap"><svg id="svgAfter" role="img" aria-label="Preview of the workflow after layout"></svg></div>
       <div id="chipsAfter" class="chips"></div>
     </section>
@@ -643,7 +644,8 @@ function segmentsCross(s1, s2) {
     direction: $('direction'),
     xPitch: $('xPitch'), yPitch: $('yPitch'),
     svgBefore: $('svgBefore'), svgAfter: $('svgAfter'), beforeNote: $('beforeNote'),
-    chipsBefore: $('chipsBefore'), chipsAfter: $('chipsAfter')
+    chipsBefore: $('chipsBefore'), chipsAfter: $('chipsAfter'),
+    agentNameBefore: $('agentNameBefore'), agentNameAfter: $('agentNameAfter')
   };
   const SVG_NS = 'http://www.w3.org/2000/svg';
   const uuid = () => (crypto && crypto.randomUUID) ? crypto.randomUUID()
@@ -702,6 +704,8 @@ function segmentsCross(s1, s2) {
     els.copyBtn.disabled = false;
 
     const name = typeof doc.name === 'string' ? doc.name : 'workflow';
+    els.agentNameBefore.textContent = name;
+    els.agentNameAfter.textContent = name;
     setStatus(els.inStatus, 'Parsed "' + name + '" - ' + layout.graph.nodes.length + ' nodes, ' + layout.graph.edges.length + ' edges. Mode: ' + layout.usedMode + '.', 'ok');
     if (layout.warnings.length) els.warnings.textContent = layout.warnings.map(w => '! ' + w).join('\n');
 
