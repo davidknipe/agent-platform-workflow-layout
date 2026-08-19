@@ -236,8 +236,10 @@
     <div class="field">
       <label for="direction">Direction</label>
       <select id="direction">
-        <option value="LR" selected>Left to right</option>
+        <option value="auto" selected>Auto</option>
+        <option value="LR">Left to right</option>
         <option value="TB">Top to bottom</option>
+        <option value="snake">Snake</option>
       </select>
     </div>
     <div class="field">
@@ -657,7 +659,7 @@ function segmentsCross(s1, s2) {
     const clamp = (v, lo, hi, dflt) => Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : dflt;
     return {
       mode: 'auto',
-      direction: els.direction.value === 'LR' ? 'LR' : 'TB',
+      direction: els.direction.value,
       snakeWidth: 3,
       xPitch: clamp(parseInt(els.xPitch.value, 10), 280, 1200, 400),
       yPitch: clamp(parseInt(els.yPitch.value, 10), 140, 1200, 240)
@@ -680,7 +682,17 @@ function segmentsCross(s1, s2) {
     catch (e) { setStatus(els.inStatus, 'Invalid JSON: ' + e.message, 'err'); clearResult(); return; }
 
     let layout;
-    try { layout = computeLayout(doc, readOptions()); }
+    try {
+      const opts = readOptions();
+      if (opts.direction === 'auto') {
+        const nodeCount = (Array.isArray(doc.steps) ? doc.steps.length : 0) + (Array.isArray(doc.triggers) ? doc.triggers.length : 0);
+        opts.direction = nodeCount < 5 ? 'LR' : 'TB';
+      } else if (opts.direction === 'snake') {
+        opts.mode = 'snake';
+        opts.direction = 'LR';
+      }
+      layout = computeLayout(doc, opts);
+    }
     catch (e) { setStatus(els.inStatus, 'Could not read workflow: ' + e.message, 'err'); clearResult(); return; }
 
     const out = buildOutput(doc, layout, uuid);
