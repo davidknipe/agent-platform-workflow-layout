@@ -137,7 +137,6 @@
   }
   .field { display: flex; flex-direction: column; gap: 4px; }
   .field label { color: var(--ax-fg-secondary); font-size: 0.75rem; line-height: 1rem; font-weight: 500; }
-  .controls .push { margin-left: auto; }
 
   /* Status + banners */
   .status { min-height: 20px; font-size: 0.75rem; line-height: 1rem; color: var(--ax-fg-secondary); }
@@ -234,26 +233,13 @@
   </div>
 
   <div class="controls">
+    <button id="runBtn" class="primary" type="button">Lay out workflow</button>
     <div class="field">
-      <label for="mode">Layout mode</label>
-      <select id="mode">
-        <option value="auto" selected>Auto</option>
-        <option value="snake">Snake</option>
-        <option value="horizontal">Horizontal</option>
-        <option value="vertical">Vertical</option>
-        <option value="layered">Layered</option>
-      </select>
-    </div>
-    <div class="field">
-      <label for="direction">Flow direction</label>
+      <label for="direction">Direction</label>
       <select id="direction">
-        <option value="TB" selected>Top to bottom</option>
-        <option value="LR">Left to right</option>
+        <option value="LR" selected>Left to right</option>
+        <option value="TB">Top to bottom</option>
       </select>
-    </div>
-    <div class="field">
-      <label for="snakeWidth">Snake width</label>
-      <input id="snakeWidth" type="number" min="2" max="12" step="1" value="3">
     </div>
     <div class="field">
       <label for="xPitch">X spacing</label>
@@ -263,7 +249,6 @@
       <label for="yPitch">Y spacing</label>
       <input id="yPitch" type="number" min="140" max="1200" step="10" value="240">
     </div>
-    <button id="runBtn" class="primary push" type="button">Lay out workflow</button>
   </div>
 
   <div class="previews">
@@ -654,7 +639,7 @@ function segmentsCross(s1, s2) {
   const els = {
     input: $('input'), output: $('output'), inStatus: $('inStatus'), outStatus: $('outStatus'),
     warnings: $('warnings'), runBtn: $('runBtn'), copyBtn: $('copyBtn'), sampleBtn: $('sampleBtn'),
-    mode: $('mode'), direction: $('direction'), snakeWidth: $('snakeWidth'),
+    direction: $('direction'),
     xPitch: $('xPitch'), yPitch: $('yPitch'),
     svgBefore: $('svgBefore'), svgAfter: $('svgAfter'), beforeNote: $('beforeNote'),
     chipsBefore: $('chipsBefore'), chipsAfter: $('chipsAfter')
@@ -672,9 +657,9 @@ function segmentsCross(s1, s2) {
   function readOptions() {
     const clamp = (v, lo, hi, dflt) => Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : dflt;
     return {
-      mode: els.mode.value,
+      mode: 'auto',
       direction: els.direction.value === 'LR' ? 'LR' : 'TB',
-      snakeWidth: clamp(parseInt(els.snakeWidth.value, 10), 2, 12, 3),
+      snakeWidth: 3,
       xPitch: clamp(parseInt(els.xPitch.value, 10), 280, 1200, 400),
       yPitch: clamp(parseInt(els.yPitch.value, 10), 140, 1200, 240)
     };
@@ -927,7 +912,7 @@ function segmentsCross(s1, s2) {
   els.runBtn.addEventListener('click', run);
   els.copyBtn.addEventListener('click', copyResult);
   els.sampleBtn.addEventListener('click', () => { els.input.value = JSON.stringify(sampleDoc(), null, 2); run(); });
-  for (const el of [els.mode, els.direction, els.snakeWidth, els.xPitch, els.yPitch]) {
+  for (const el of [els.direction, els.xPitch, els.yPitch]) {
     el.addEventListener('change', () => { if (els.input.value.trim()) run(); });
   }
 })();
