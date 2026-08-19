@@ -1,0 +1,25 @@
+{
+  "name": "agent-platform-workflow-layout",
+  "version": "1.0.0",
+  "description": "",
+  "main": "opal-workflow-layout.js",
+  "types": "opal-workflow-layout.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidknipe/agent-platform-workflow-layout.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/davidknipe/agent-platform-workflow-layout/issues"
+  },
+  "homepage": "https://github.com/davidknipe/agent-platform-workflow-layout#readme",
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
+}

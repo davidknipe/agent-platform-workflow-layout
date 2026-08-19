@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "module": "ES2020",
+    "strict": true,
+    "declaration": true
+  },
+  "include": ["opal-workflow-layout.ts"]
+}
