@@ -14,7 +14,11 @@
     --ax-bg-inverse: #252825;
     --ax-bg-inverse-hovered: #383E38;
     --ax-bg-accent: #ABFF44;
+    --ax-bg-accent-hovered: #99F141;
+    --ax-bg-accent-pressed: #7DDD3D;
     --ax-bg-accent-subtle: #EEFFD9;
+    --ax-fg-black: #202320;
+    --ax-fg-success-light: #CEFF93;
     --ax-bg-success-subtle: #EEFFD9;
     --ax-bg-warning-subtle: #FEF1C6;
     --ax-bg-error-subtle: #FFDFE8;
@@ -118,8 +122,9 @@
   }
   button:hover:not(:disabled) { border-color: var(--ax-border-control-hovered); background: #5F931F14; }
   button:disabled { background: var(--ax-bg-secondary); border-color: transparent; color: var(--ax-fg-disabled); cursor: not-allowed; }
-  button.primary { background: var(--ax-bg-inverse); border-color: var(--ax-bg-inverse); color: var(--ax-fg-inverse); font-weight: 600; }
-  button.primary:hover:not(:disabled) { background: var(--ax-bg-inverse-hovered); border-color: var(--ax-bg-inverse-hovered); }
+  button.primary { background: var(--ax-bg-accent); border-color: var(--ax-bg-accent); color: var(--ax-fg-black); font-weight: 600; }
+  button.primary:hover:not(:disabled) { background: var(--ax-bg-accent-hovered); border-color: var(--ax-bg-accent-hovered); }
+  button.primary:active:not(:disabled) { background: var(--ax-bg-accent-pressed); border-color: var(--ax-bg-accent-pressed); }
   button.subtle { border-color: transparent; background: transparent; }
   button.subtle:hover:not(:disabled) { background: #5F931F14; border-color: transparent; }
 
@@ -176,6 +181,26 @@
   .node-rect.condition { stroke-dasharray: 5 4; }
   .node-label { fill: var(--ax-fg-default); font-family: var(--ax-font-sans); font-size: 15px; font-weight: 500; }
   .node-kind { fill: var(--ax-fg-tertiary); font-family: var(--ax-font-heading); font-size: 11px; letter-spacing: .08em; font-weight: 600; }
+
+  /* Toasts (Axiom: inverse surface, top-right region) */
+  .toast-region {
+    position: fixed; top: 68px; right: 24px; z-index: 100;
+    display: flex; flex-direction: column; gap: 8px; align-items: flex-end;
+    pointer-events: none;
+  }
+  .toast {
+    pointer-events: auto; cursor: pointer;
+    display: flex; align-items: center; gap: 10px;
+    background: var(--ax-bg-inverse); color: var(--ax-fg-inverse);
+    border-radius: var(--ax-radius-md); box-shadow: var(--ax-shadow-sm);
+    padding: 10px 16px; font-size: 0.875rem; line-height: 1.25rem;
+    max-width: 360px;
+    opacity: 0; translate: 0 -8px;
+    transition: opacity .3s ease, translate .3s ease;
+  }
+  .toast.show { opacity: 1; translate: 0 0; }
+  .toast .toast-icon { color: var(--ax-fg-success-light); flex: none; display: inline-flex; }
+  @media (prefers-reduced-motion: reduce) { .toast { translate: 0 0; transition: opacity .3s ease; } }
 
   footer { color: var(--ax-fg-tertiary); font-size: 0.75rem; line-height: 1rem; margin-top: 24px; }
   footer code { font-family: var(--ax-font-mono); }
@@ -256,6 +281,8 @@
 
   <footer>Runs entirely in this page. Only <code>agent_metadata.nodes</code> and <code>agent_metadata.edges</code> are rewritten; the rest of the file is untouched.</footer>
 </main>
+
+<div class="toast-region" id="toastRegion" role="region" aria-live="polite" aria-label="Notifications"></div>
 
 <script>
 /* Opal workflow layout engine (pure, no DOM) */
@@ -835,11 +862,44 @@ function segmentsCross(s1, s2) {
     }
   }
 
+  function showToast(message) {
+    const region = document.getElementById('toastRegion');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    const icon = document.createElementNS(SVG_NS, 'svg');
+    icon.setAttribute('width', '16'); icon.setAttribute('height', '16');
+    icon.setAttribute('viewBox', '0 0 16 16'); icon.setAttribute('aria-hidden', 'true');
+    const tickPath = document.createElementNS(SVG_NS, 'path');
+    tickPath.setAttribute('d', 'M3 8.5 L6.5 12 L13 4.5');
+    tickPath.setAttribute('fill', 'none');
+    tickPath.setAttribute('stroke', 'currentColor');
+    tickPath.setAttribute('stroke-width', '2');
+    tickPath.setAttribute('stroke-linecap', 'round');
+    tickPath.setAttribute('stroke-linejoin', 'round');
+    icon.appendChild(tickPath);
+    const iconWrap = document.createElement('span');
+    iconWrap.className = 'toast-icon';
+    iconWrap.appendChild(icon);
+    const text = document.createElement('span');
+    text.textContent = message;
+    toast.appendChild(iconWrap);
+    toast.appendChild(text);
+    region.appendChild(toast);
+    requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('show')));
+    const dismiss = () => {
+      toast.classList.remove('show');
+      toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+      setTimeout(() => toast.remove(), 400); // fallback if transitionend never fires
+    };
+    const timer = setTimeout(dismiss, 3000);
+    toast.addEventListener('click', () => { clearTimeout(timer); dismiss(); });
+  }
+
   async function copyResult() {
     if (!els.output.value) return;
     try {
       await navigator.clipboard.writeText(els.output.value);
-      setStatus(els.outStatus, 'Copied to clipboard.', 'ok');
+      showToast('JSON copied to clipboard');
     } catch {
       els.output.focus();
       els.output.select();
