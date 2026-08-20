@@ -22,7 +22,7 @@ See `application.md` for the full specification: JSON schema, layout algorithm d
 - **Custom domain:** workflow-layout.davidknipe.com (configured in Cloudflare dashboard)
 - **GitHub repo:** https://github.com/davidknipe/agent-platform-workflow-layout
 - **Cloudflare account:** knipey@me.com
-- **Cloudflare Web Analytics:** enabled on the Pages project
+- **Cloudflare Web Analytics:** manual beacon snippet in `index.html` (token `bb09324ce25c43a7ac0d8a9fa492bd48`, registered against `workflow-layout.pages.dev` — works on both `.pages.dev` and the custom domain)
 
 ## Deployment
 Connected to GitHub — every push to `main` auto-deploys via Cloudflare Pages.
